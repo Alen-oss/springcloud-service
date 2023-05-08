@@ -1,0 +1,22 @@
+server:
+  port: 8082
+
+spring:
+  application:
+    name: dubbo-service
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+        username: nacos
+        password: nacos
+
+# consumer端不用provider端这么多配置，只需保持和注册中心Nacos的联系即可
+dubbo:
+  application:
+    name: consumer-dubbo
+    qos-enable: true
+    qos-port: 33333 # qos服务的端口，同一台主机多个Dubbo实例时记得修改这个端口
+    qos-accept-foreign-ip: false
+  registry:
+    address: nacos://127.0.0.1:8848

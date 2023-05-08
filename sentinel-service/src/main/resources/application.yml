@@ -1,0 +1,60 @@
+server:
+  port: 8085
+
+spring:
+  application:
+    name: sentinel-service
+  cloud:
+    # sentinel core与dashboard通信的端口默认为8719，而非微服务本身的端口
+    # sentinel core实现限流熔断主要通过核心拦截器SentinelWebInterceptor，这个拦截器默认对所有请求/**进行拦截，然后开始链式处理请求，每一个处理请求的节点称为槽Slot
+    # 每个Slot都有其作用，默认Slot有7个，从dashboard推送过来的新规则会被保存在"规则池"中，在后续请求校验时生效
+    # sentinel默认的限流算法为滑动窗口算法
+    sentinel:
+      transport:
+        dashboard: 127.0.0.1:9100
+      eager: true
+      # sentinel规则存储nacos配置中心
+      datasource:
+        flow:
+          nacos:
+            server-addr: 127.0.0.1:8848
+            # dataId和groupId自己去nacos配置中心设置
+            dataId: xxx
+            groupId: xxx_group
+            # 限流规则固定写死flow
+            rule-type: flow
+            username: nacos
+            password: nacos
+        degrade:
+          nacos:
+            server-addr: 127.0.0.1:8848
+            dataId: xxx
+            groupId: xxx_group
+            rule-type: degrade
+            username: nacos
+            password: nacos
+# 在nacos配置中心设置的限流规则，使用JSON格式
+# [
+#   {
+#     "resource":"/test_flow_rule", #资源名，说明对那个URI进行流控
+#     "limitApp":"default",  #命名空间，默认default
+#     "grade":1, #类型 0-线程 1-QPS
+#     "count":2, #超过2个QPS限流将被限流
+#     "strategy":0, #限流策略: 0-直接 1-关联 2-链路
+#     "controlBehavior":0, #控制行为: 0-快速失败 1-WarmUp 2-排队等待
+#     "clusterMode":false #是否集群模式
+#   }
+# ]
+
+# 在nacos配置中心设置的熔断规则，使用JSON格式
+# [
+#   {
+#     "resource": "createOrder", #自定义资源名
+#     "limitApp": "default", #命名空间
+#     "grade": 0, #0-慢调用比例 1-异常比例 2-异常数
+#     "count": 100, #最大RT 100毫秒执行时间
+#     "timeWindow": 5, #时间窗口5秒
+#     "minRequestAmount": 1, #最小请求数
+#     "slowRatioThreshold": 0.1 #比例阈值
+#   }
+# ]

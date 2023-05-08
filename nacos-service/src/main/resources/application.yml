@@ -1,0 +1,26 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    # 应用名称，默认也是在微服务中注册的微服务ID
+    name: nacos-service
+  cloud:
+    nacos:
+      discovery:
+        # 连接Nacos服务器的IP地址，8848是默认的对外服务端口，7848是集群内部通信端口
+        server-addr: 127.0.0.1:8848
+        username: nacos
+        password: xichang810925
+
+# provider端是通过Dubbo容器对外暴露服务的
+dubbo:
+  application:
+    name: provider-dubbo # dubbo容器在nacos中的名称
+  registry:
+    address: nacos://127.0.0.1:8848 #一致即可
+  protocol:
+    name: dubbo # 默认协议名
+    port: 20880 # dubbo通信端口
+  scan:
+    base-packages: com.wtgroup.nacosservice.dubbo # 代表dubbo容器启动时需要扫描的地址，会将其中的@DubboService服务注册到nacos

@@ -1,0 +1,13 @@
+# 这个文件是引导文件
+spring:
+  application:
+    name: config-service
+  profiles:
+    active: dev
+  cloud:
+    nacos:
+      config:
+        file-extension: yml # 决定了读取配置中心上Data ID为config-service-dev.yml
+        server-addr: 127.0.0.1:8848
+        username: nacos
+        password: nacos

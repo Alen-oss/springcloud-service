@@ -1,0 +1,34 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: openfeign-service
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+        username: nacos
+        password: xichang810925
+
+# 设置服务提供者的负载均衡策略
+nacos-service:
+  ribbon:
+    NFLoadBalancerRuleClassName: com.netflix.loadbalancer.RandomRule
+
+fegin:
+  compression:
+    request:
+      # 开启请求数据压缩功能
+      enabled: true
+      # 压缩支持的MIME类型
+      mime-types: text/xml,application/xml,application/json
+      # 数据压缩下限，大于1024
+      min-request-size: 1024
+    response:
+      # 开启响应数据压缩功能
+      enableds: true
+  # OpenFeign默认使用Java自带的URLConnection对象创建HTTP请求，内部是允许将其替换成Apache HttpClient、OKHttp这样的专用通信组件的
+  okhttp:
+    # 启用OkHttpClient客户端
+    enabled: true

@@ -1,0 +1,40 @@
+server:
+  port: 8083
+
+spring:
+  application:
+    name: gateway-service
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+        username: nacos
+        password: nacos
+    gateway: # 无关路由规则的访问规则：http://网关IP:端口/微服务ID/URI
+      discovery:
+        locator:
+          enabled: false # 是否允许gateway通过nacos实现自动路由转发，即直接转发，无关路由设置
+      routes:
+      - id: route-a
+        uri: lb://nacos-service # lb开头代表基于gateway的负载均衡策略选择实例
+        predicates: # 谓词配置
+        - Path=/c/** # Path路径谓词，代表用户端URI如果以/c开头便会转发到nacos-service实例
+        filters: # 过滤器配置
+        - StripPrefix=1 # 用户端URI忽略到第一层前缀进行转发，即/c/**变为/**
+
+# 常见的谓词形式：
+# - After=2020-10-04T00:00:00.000+08:00 （在指定时间之后路由规则生效）
+# - Before=2020-10-04T00:00:00.000+08:00
+# - Path=/b/** （Path代表URI符合映射规则时生效）
+# - Header=X-Request-Id, \d+（包含指定请求头时才生效，本例的意思是请求中有X-Request-Id，且值与\d+正则表达式匹配，即具有一个或多个数字的值）
+# - Method=GET
+
+# 常见的内置过滤器：
+# - AddRequestParameter=foo,bar（在请求参数中追加foo=bar）
+# - AddResponseHeader=X-Response,Blue
+# - name: Retry （重试过滤器，当后端服务器不可用时，网关会根据过滤器配置参数来进行重试）
+#   args:
+#     retries: 3
+#     status: 503 （当后端服务器返回503时，开始发起重试）
+
+
